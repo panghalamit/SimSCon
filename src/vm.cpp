@@ -3,8 +3,8 @@
 
 VM :: VM(double *arr, double sr)
 {
-	this.arrival_rates = arr;
-	this.serice_rate = sr;
+	arrival_rates = arr;
+	service_rate = sr;
 }
 
 
@@ -15,7 +15,7 @@ double VM :: getArrivalRate(int t)
 
 double VM :: getServiceRate()
 {
-	return serice_rate;
+	return service_rate;
 }
 
 VM :: ~VM ()

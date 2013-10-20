@@ -5,10 +5,12 @@ class Event
 {
 	private:
 		event_type type;
-		double time;
+		double stime;
 	public:
 		Event(event_type e, double t);
+		bool operator<(const Event * e);
 		double getTime();
 		event_type getEventType();
 		~Event();
 };
+

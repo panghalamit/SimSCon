@@ -2,8 +2,13 @@
 
 Event :: Event(event_type e, double t)
 {
-	this.type = e;
-	this.time = t;
+	type = e;
+	stime = t;
+}
+
+bool Event :: operator<(const Event *e)
+{
+	return e->stime < stime;
 }
 
 event_type Event :: getEventType()
@@ -13,7 +18,7 @@ event_type Event :: getEventType()
 
 double Event :: getTime()
 {
-	return time;
+	return stime;
 }
 
 Event :: ~Event() {}
