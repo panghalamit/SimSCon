@@ -1,3 +1,7 @@
+#ifndef VM_H
+#define VM_H
+
+
 #include "common.h"
 
 class VM
@@ -15,3 +19,5 @@ public:
 	int getIndex();
 	~VM();
 };
+
+#endif

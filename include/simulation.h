@@ -1,3 +1,6 @@
+#ifndef SIMULATION_H
+#define SIMULATION_H 
+
 #include <queue>
 #include <vector>
 #include <iostream>
@@ -17,3 +20,5 @@ class Simulation
 		void start();
 		~Simulation();
 };
+
+#endif

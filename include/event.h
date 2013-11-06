@@ -1,4 +1,5 @@
-
+#ifndef EVENT_H
+#define EVENT_H
 typedef enum{ARRIVAL=0, DEPARTURE} event_type; 
 
 class Event
@@ -16,3 +17,4 @@ class Event
 		~Event();
 };
 
+#endif
