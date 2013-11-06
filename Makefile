@@ -10,10 +10,10 @@ SDIR = src
 ODIR = bin
 LIBS = -lm
 
-_DEPS = event.h simulation.h vm.h 
+_DEPS = event.h simulation.h vm.h common.h lcgrand.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = event.o vm.o simulation.o
+_OBJ = event.o vm.o simulation.o common.o lcgrand.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

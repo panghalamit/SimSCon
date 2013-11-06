@@ -1,9 +1,10 @@
 #include "event.h"
 
-Event :: Event(event_type e, double t)
+Event :: Event(event_type e, double t, int vmi)
 {
 	type = e;
 	stime = t;
+	vm_index = vmi;
 }
 
 bool Event :: operator<(const Event *e)
@@ -19,6 +20,11 @@ event_type Event :: getEventType()
 double Event :: getTime()
 {
 	return stime;
+}
+
+int Event :: getVMIndex()
+{
+	return vm_index;
 }
 
 Event :: ~Event() {}
