@@ -22,6 +22,11 @@ double Event :: getTime()
 	return stime;
 }
 
+int Event :: getVMIndex()
+{
+	return vm_index;
+}
+
 void Event :: printDetails()
 {
 	switch(etype)

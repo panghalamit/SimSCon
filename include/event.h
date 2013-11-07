@@ -15,6 +15,7 @@ class Event
 	Event(EventType, double, int);
 	bool operator<(const Event) const;
 	double getTime();
+	int getVMIndex();
 	EventType getEventType();
 	void printDetails();
 };
