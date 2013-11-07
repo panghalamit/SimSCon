@@ -1,42 +1,32 @@
 #include "simulation.h"
 
-
-
-Simulation :: Simulation(double *ar, double sr, int numvm)
+Simulation :: Simulation(VM* v)
 {
-	for(int i=0; i<numvm; i++)
-		vmlist[i] = new VM(ar, sr, i);
-	event_list.push(new Event(ARRIVAL, 0, 0));
+	vm = v;
 }
+
 void Simulation :: start()
+{
+	event_list.push(Event(ARRIVAL, 0, vm->getIndex()));
+	cout<<"Yay!! Simulation started..."<<endl;
+}
+
+void Simulation :: run(double stop_time)
 {
 	while(!event_list.empty())
 	{
-		Event * e = event_list.top();
+		Event e = event_list.top();
+		if(e.getTime() > stop_time)
+			break;
 
-		Event * new_event = getNextEvent(e);
-
+		e.printDetails();
+		if(e.getEventType() == ARRIVAL)
+		{
+			event_list.push(Event(ARRIVAL, e.getTime()+vm->getNextInterArrivalTime(), vm->getIndex()));
+			event_list.push(Event(DEPARTURE, e.getTime()+vm->getNextServiceTime(), vm->getIndex()));
+		}
 		event_list.pop();
-
-        event_list.push(new_event);
-
-		delete e;
 	}
-}
 
-Event * Simulation :: getNextEvent(Event * e)
-{
-	if(e->getEventType() == ARRIVAL)
-	{
-		return new Event(ARRIVAL, e->getTime()+(vmlist[e->getVMIndex()])->getNextArrivalTime(e->getTime()), e->getVMIndex());
-	}
-	else 
-	{
-		return new Event(DEPARTURE, e->getTime()+(vmlist[e->getVMIndex()])->getNextDepartureTime(e->getTime()), e->getVMIndex());
-	}
-}
-
-Simulation :: ~Simulation()
-{
-	vmlist.clear();
+	cout<<"Simulation completed \\m/"<<endl;
 }

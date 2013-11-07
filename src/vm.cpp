@@ -1,16 +1,22 @@
 #include "vm.h"
 
-VM :: VM(double *arr, double sr, int i)
+VM :: VM(double arr, double sr, int i)
 {
-	arrival_rates = arr;
+	arrival_rate = arr;
 	service_rate = sr;
 	index = i;
 }
 
-
-double VM :: getArrivalRate(int t)
+VM :: VM(const VM &vm)
 {
-	return arrival_rates[t];
+	arrival_rate = vm.arrival_rate;
+	service_rate = vm.service_rate;
+	index = vm.index;
+}
+
+double VM :: getArrivalRate()
+{
+	return arrival_rate;
 } 
 
 double VM :: getServiceRate()
@@ -23,14 +29,12 @@ int VM :: getIndex()
 	return index;
 }
 
-double VM :: getNextArrivalTime(double time)
+double VM :: getNextInterArrivalTime()
 {
-	return (double) poisson(arrival_rates[(int) time]); 
+	return (double) poisson(arrival_rate); 
 }
 
-double VM :: getNextDepartureTime(double time)
+double VM :: getNextServiceTime()
 {
 	return (double) expon(service_rate);
 }
-VM :: ~VM ()
-{}

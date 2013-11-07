@@ -19,12 +19,12 @@ OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $<
 
-all: dir $(ODIR)/main
+all: dir $(ODIR)/sim
 
 dir:    
 	mkdir -p $(ODIR)
 
-$(ODIR)/main: $(OBJ)
+$(ODIR)/sim: $(OBJ)
 	$(CC) $(LIBS) -I$(IDIR) -o $@ $^ $(SDIR)/main.cpp $(PROFILE)
 clean:
 	rm -rf $(ODIR) *~ $(INCDIR)/*~

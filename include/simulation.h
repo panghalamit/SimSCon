@@ -6,19 +6,17 @@
 #include <iostream>
 #include "event.h"
 #include "vm.h"
-
 using namespace std;
 
 class Simulation
 {
-	private:
-		priority_queue<Event *> event_list;
-		vector<VM*> vmlist;
-	public:
-		Simulation(double *, double, int);
-		Event * getNextEvent(Event * );
-		void start();
-		~Simulation();
+	VM *vm;
+	priority_queue<Event> event_list;
+  public:
+	Simulation(VM*);
+	Event getNextEvent(Event);
+	void start();
+	void run(double stop_time);
 };
 
 #endif

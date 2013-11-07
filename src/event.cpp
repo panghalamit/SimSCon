@@ -1,20 +1,20 @@
 #include "event.h"
 
-Event :: Event(event_type e, double t, int vmi)
+Event :: Event(EventType e, double t, int vmi)
 {
-	type = e;
+	etype = e;
 	stime = t;
 	vm_index = vmi;
 }
 
-bool Event :: operator<(const Event *e)
+bool Event :: operator<(const Event e) const
 {
-	return e->stime < stime;
+	return e.stime < stime;
 }
 
-event_type Event :: getEventType()
+EventType Event :: getEventType()
 {
-	return type;
+	return etype;
 } 
 
 double Event :: getTime()
@@ -22,9 +22,15 @@ double Event :: getTime()
 	return stime;
 }
 
-int Event :: getVMIndex()
+void Event :: printDetails()
 {
-	return vm_index;
+	switch(etype)
+	{
+		case ARRIVAL:
+			cout<<"ARRIVAL: "<<stime<<endl;
+			break;
+		case DEPARTURE:
+			cout<<"DEPARTURE: "<<stime<<endl;
+			break;
+	}
 }
-
-Event :: ~Event() {}

@@ -1,21 +1,13 @@
 #include <iostream>
 #include "simulation.h"
-
+#include "vm.h"
 
 int main()
 {
-	int N, st;
-	long seed;
-	cin>>N;
-	double *arr = new double[N];
-	double sr;
-	for(int i=0; i<N; i++)
-		cin>>arr[i];
-	cin>>sr;
-	cin>>st>>seed;
-	setStream(st);
-	lcgrandst (seed, st);
-	Simulation * sim = new Simulation(arr, sr, N);
-	sim->start();
+	VM vm(0.5, 0.6, 0);
+	Simulation sim(&vm);
+	sim.start();
+	sim.run(50);
+	sim.run(100);
 	return 0;
 }

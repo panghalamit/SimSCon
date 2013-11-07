@@ -1,23 +1,21 @@
 #ifndef VM_H
 #define VM_H
 
-
 #include "common.h"
 
 class VM
 {
-private:
-	double *arrival_rates;
+	double arrival_rate;
 	double service_rate;
 	int index;
-public:
-	VM(double *ar, double sr, int i);
-	double getArrivalRate(int time);
+  public:
+	VM(double, double, int);
+	VM(const VM&);
+	double getArrivalRate();
 	double getServiceRate();
-	double getNextArrivalTime(double time);
-	double getNextDepartureTime(double time);
+	double getNextInterArrivalTime();
+	double getNextServiceTime();
 	int getIndex();
-	~VM();
 };
 
 #endif

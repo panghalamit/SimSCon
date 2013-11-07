@@ -1,20 +1,22 @@
 #ifndef EVENT_H
 #define EVENT_H
-typedef enum{ARRIVAL=0, DEPARTURE} event_type; 
+
+#include <iostream>
+using namespace std;
+
+typedef enum{ARRIVAL=0, DEPARTURE} EventType; 
 
 class Event
 {
-	private:
-		event_type type;
-		double stime;
-		int vm_index;
-	public:
-		Event(event_type e, double t, int vmi);
-		bool operator<(const Event * e);
-		double getTime();
-		event_type getEventType();
-		int getVMIndex();
-		~Event();
+	EventType etype;
+	double stime;
+	int vm_index;
+  public:
+	Event(EventType, double, int);
+	bool operator<(const Event) const;
+	double getTime();
+	EventType getEventType();
+	void printDetails();
 };
 
 #endif
