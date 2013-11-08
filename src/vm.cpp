@@ -41,9 +41,19 @@ float VM :: getNextInterArrivalTime()
 	return poisson(arrival_rate);
 }
 
-float VM :: getNextServiceTime()
+float VM :: getNextServiceTime(SimData *sdata, int *vm_to_pm_map)
 {
 	float st = expon(service_rate);
+	int pm = vm_to_pm_map[index];
+
+	float sum_rho = 0;
+	for(int i=0; i<sdata->getNumVM(); i++)
+	{
+		if(vm_to_pm_map[i]==pm)
+			sum_rho += (sdata->getArrivalRate(i)/sdata->getFixedServiceRate(i));
+	}
+
+	st = st/(1-(arrival_rate/service_rate)/sum_rho);
 	*st_file << st << endl;
 	return st;
 }

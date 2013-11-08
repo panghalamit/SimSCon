@@ -1,13 +1,14 @@
 #ifndef VM_H
 #define VM_H
 
-#include "common.h"
 #include <fstream>
 #include <cstring>
 #include <string>
 #include <sstream>
 #include <cstdlib>
 #include <iostream>
+#include "simdata.h"
+#include "common.h"
 using namespace std;
 
 class VM
@@ -24,7 +25,7 @@ class VM
 	float getArrivalRate();
 	float getServiceRate();
 	float getNextInterArrivalTime();
-	float getNextServiceTime();
+	float getNextServiceTime(SimData*, int*);
 	int getIndex();
 	void stop();
 };
