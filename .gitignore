@@ -18,3 +18,4 @@ bin/*
 input
 output
 results/*.txt
+results/*.pdf

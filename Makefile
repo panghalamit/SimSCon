@@ -32,5 +32,9 @@ clean:
 
 distclean: clean
 	rm -f results/*.txt
+	rm -f results/*.pdf
+
+plot:
+	cd results && gnuplot service_time_plot.p
 
 .PHONY: clean
