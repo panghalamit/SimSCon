@@ -6,6 +6,7 @@
 #include <iostream>
 #include "event.h"
 #include "vm.h"
+#include "simdata.h"
 using namespace std;
 
 class Simulation
@@ -13,7 +14,7 @@ class Simulation
 	vector<VM*> vmlist;
 	priority_queue<Event> event_list;
   public:
-	Simulation(vector<VM*> );
+	Simulation(SimData *);
 	Event getNextEvent(Event);
 	void start();
 	void run(double stop_time);

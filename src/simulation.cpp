@@ -1,9 +1,9 @@
 #include "simulation.h"
 
-Simulation :: Simulation(vector<VM*> v)
+Simulation :: Simulation(SimData *sdata)
 {
-	for(unsigned int i=0; i<vmlist.size(); i++)
-		vmlist[i] = v[i];
+	for(int i=0; i<sdata->getNumVM(); i++)
+		vmlist.push_back(new VM(sdata->getArrivalRate(i), sdata->getFixedServiceRate(i), i));
 }
 
 void Simulation :: start()

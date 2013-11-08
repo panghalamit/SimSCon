@@ -32,10 +32,10 @@ void Event :: printDetails()
 	switch(etype)
 	{
 		case ARRIVAL:
-			cout<<"ARRIVAL: "<<stime<<endl;
+			cout<<"ARRIVAL on VM"<<vm_index<<": "<<stime<<endl;
 			break;
 		case DEPARTURE:
-			cout<<"DEPARTURE: "<<stime<<endl;
+			cout<<"DEPARTURE on VM"<<vm_index<<": "<<stime<<endl;
 			break;
 	}
 }
