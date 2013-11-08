@@ -37,5 +37,11 @@ void Event :: printDetails()
 		case DEPARTURE:
 			cout<<"DEPARTURE on VM"<<vm_index<<": "<<stime<<endl;
 			break;
+		case PHASE_BEGIN:
+			cout<<endl<<"** PHASE "<<vm_index<<" BEGINS **"<<endl;
+			break;
+		case MIG_BEGIN:
+			cout<<"** MIGRATION for PHASE "<<vm_index<<" BEGINS**"<<endl;
+			break;
 	}
 }

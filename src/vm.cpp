@@ -5,9 +5,12 @@ VM :: VM(float arr, float sr, int i)
 	arrival_rate = arr;
 	service_rate = sr;
 	index = i;
-	avg_waiting_time=0;
-	avg_response_time=0;
-	avg_queue_length=0;
+	busy = false;
+
+	cum_waiting_time=0; delayed_customers = 0;
+	cum_response_time=0; total_departures = 0;
+	cum_queue_length=0; last_update_time = 0;
+
 	st_file = new ofstream((string("results/service_time_vm") +
 						static_cast<ostringstream*>(&(ostringstream()<<index))->str() + string(".txt")).c_str());
 	if(!st_file->is_open())
@@ -22,15 +25,15 @@ VM :: VM(const VM &vm)
 	arrival_rate = vm.arrival_rate;
 	service_rate = vm.service_rate;
 	index = vm.index;
-	avg_waiting_time = vm.avg_waiting_time;
-	avg_response_time = vm.avg_response_time;
-	avg_queue_length = vm.avg_queue_length;
+
+	cum_waiting_time = vm.cum_waiting_time;
+	cum_response_time = vm.cum_response_time;
+	cum_queue_length = vm.cum_queue_length;
+
 	list<float>::const_iterator it;
 	server_queue.clear();
 	for(it= (vm.server_queue).begin(); it!=(vm.server_queue).end(); it++)
-	{
 		server_queue.push_back(*it);
-	}
 }
 
 float VM :: getArrivalRate()
@@ -50,27 +53,32 @@ int VM :: getIndex()
 
 float VM :: getNextInterArrivalTime()
 {
-	return poisson(arrival_rate);
+	return expon(1/arrival_rate);
 }
 
 float VM :: getNextServiceTime(SimData *sdata, int *vm_to_pm_map)
 {
-	float st = expon(service_rate);
+	float st = expon(1/service_rate);
 	int pm = vm_to_pm_map[index];
 
 	float sum_rho = 0;
 	for(int i=0; i<sdata->getNumVM(); i++)
 	{
-		if(vm_to_pm_map[i]==pm)
+		if(vm_to_pm_map[i] == pm)
 			sum_rho += (sdata->getArrivalRate(i)/sdata->getFixedServiceRate(i));
 	}
 
-	st = st/(1-(arrival_rate/service_rate)/sum_rho);
+	st = st/(arrival_rate/service_rate)*sum_rho;
 	*st_file << st << endl;
 	return st;
 }
 
-bool VM :: ifIdle()
+bool VM :: isIdle()
+{
+	return !busy;
+}
+
+bool VM :: isEmptyQueue()
 {
 	return (server_queue.size() == 0);
 }
@@ -88,17 +96,17 @@ float VM :: getTopInQ()
 
 float VM :: getAvgWaitingTime()
 {
-	return avg_waiting_time;
+	return cum_waiting_time/delayed_customers;
 }
-	
+
 float VM :: getAvgResponseTime()
 {
-	return avg_response_time;
+	return (cum_response_time/total_departures);
 }
-	
-float VM :: getAvgQLength()
+
+float VM :: getAvgQLength(float current_time)
 {
-	return avg_queue_length;
+	return (cum_queue_length + (current_time - last_update_time) * server_queue.size())/current_time;
 }
 
 int VM :: getTotalReqs()
@@ -106,25 +114,34 @@ int VM :: getTotalReqs()
 	return total_reqs;
 }
 
-void VM :: update_on_arrival(float t, float serv_t)
+void VM :: update_on_arrival(float current_time, float serv_time)
 {
 	total_reqs++;
-	if(server_queue.size() > 0)
+	if(busy)
 	{
-		server_queue.push_back(t);
-		avg_queue_length += (server_queue.size()/total_reqs);
+		server_queue.push_back(current_time);
+		cum_queue_length += server_queue.size() * (current_time - last_update_time);
+		last_update_time = current_time;
+	} else
+	{
+		busy = true;
+		total_departures++;
+		cum_response_time += serv_time;
 	}
-	else if(serv_t != -1) //waiting time zero
-		avg_response_time += (serv_t/total_reqs);
 }
-	
-void VM :: update_on_departure(float t)
+
+void VM :: update_on_departure(float current_time, float serv_time)
 {
 	if(server_queue.size() > 0)
 	{
-		avg_waiting_time += ((t-server_queue.front())/total_reqs);
+		delayed_customers++; cum_waiting_time += current_time - server_queue.front();
+		total_departures++; cum_response_time += serv_time + current_time - server_queue.front();
 		server_queue.pop_front();
-	}
+	} else
+		busy = false;
+
+	cum_queue_length += server_queue.size() * (current_time - last_update_time);
+	last_update_time = current_time;
 }
 
 void VM :: stop()

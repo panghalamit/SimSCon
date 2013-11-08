@@ -18,11 +18,13 @@ class VM
 	float service_rate;
 	int index;
 	ofstream *st_file;
+	bool busy;
 	list<float> server_queue;
-	float avg_waiting_time;
-	float avg_response_time;
-	float avg_queue_length;
+	float cum_waiting_time; int delayed_customers;
+	float cum_response_time; int total_departures;
+	float cum_queue_length; float last_update_time;
 	int total_reqs;
+
   public:
 	VM(float, float, int);
 	~VM();
@@ -34,12 +36,13 @@ class VM
 	int getIndex();
 	float getAvgWaitingTime();
 	float getAvgResponseTime();
-	float getAvgQLength();
+	float getAvgQLength(float);
 	int getTotalReqs();
-	bool ifIdle();
+	bool isIdle();
+	bool isEmptyQueue();
 	float getTopInQ();
 	void update_on_arrival(float, float);
-	void update_on_departure(float);
+	void update_on_departure(float, float);
 	void stop();
 };
 

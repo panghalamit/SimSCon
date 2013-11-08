@@ -41,11 +41,14 @@ double expon(double x)
   double exp_value;             // Computed exponential value to be returned
 
   // Pull a uniform random number (0 < z < 1)
-  z = lcgrand(stream_id);
+  do
+  {
+    z = lcgrand(stream_id);
+  }
+  while ((z == 0) || (z == 1));
 
   // Compute exponential random variable using inversion method
   exp_value = -x * log(z);
 
   return(exp_value);
 }
-

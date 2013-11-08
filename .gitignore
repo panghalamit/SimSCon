@@ -19,3 +19,4 @@ input
 output
 results/*.txt
 results/*.pdf
+doc/build/*

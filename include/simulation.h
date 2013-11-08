@@ -4,6 +4,7 @@
 #include <queue>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "config.h"
 #include "event.h"
 #include "vm.h"

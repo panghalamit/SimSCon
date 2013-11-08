@@ -13,8 +13,7 @@ int main()
 
 	Simulation sim(s_data);
 	sim.start();
-	sim.run(50);
-	sim.run(100);
+	sim.run(200);
 	sim.stop();
 
 	delete s_data;

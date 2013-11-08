@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-typedef enum{ARRIVAL=0, DEPARTURE} EventType;
+typedef enum{ARRIVAL=0, DEPARTURE, PHASE_BEGIN, MIG_BEGIN} EventType;
 
 class Event
 {
