@@ -1,2 +1,8 @@
-check common.h & common.cpp (random algorithms)
 middle layer
+
+Example input file
+------------------
+4
+4
+0.4 0.5 0.6 0.7
+0.3 0.45 0.5 0.6
