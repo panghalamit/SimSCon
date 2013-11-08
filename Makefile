@@ -21,12 +21,16 @@ $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 
 all: dir $(ODIR)/sim
 
-dir:    
+dir:
 	mkdir -p $(ODIR)
 
 $(ODIR)/sim: $(OBJ)
 	$(CC) $(LIBS) -I$(IDIR) -o $@ $^ $(SDIR)/main.cpp $(PROFILE)
+
 clean:
 	rm -rf $(ODIR) *~ $(INCDIR)/*~
+
+distclean: clean
+	rm -f results/*.txt
 
 .PHONY: clean

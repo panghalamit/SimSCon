@@ -1,10 +1,17 @@
 #include "vm.h"
 
-VM :: VM(double arr, double sr, int i)
+VM :: VM(float arr, float sr, int i)
 {
 	arrival_rate = arr;
 	service_rate = sr;
 	index = i;
+	st_file = new ofstream((string("results/service_time_vm") +
+						static_cast<ostringstream*>(&(ostringstream()<<index))->str() + string(".txt")).c_str());
+	if(!st_file->is_open())
+	{
+		cout<<"error occured, cannot open file!"<<endl;
+		exit(1);
+	}
 }
 
 VM :: VM(const VM &vm)
@@ -14,12 +21,12 @@ VM :: VM(const VM &vm)
 	index = vm.index;
 }
 
-double VM :: getArrivalRate()
+float VM :: getArrivalRate()
 {
 	return arrival_rate;
-} 
+}
 
-double VM :: getServiceRate()
+float VM :: getServiceRate()
 {
 	return service_rate;
 }
@@ -29,12 +36,24 @@ int VM :: getIndex()
 	return index;
 }
 
-double VM :: getNextInterArrivalTime()
+float VM :: getNextInterArrivalTime()
 {
-	return (double) poisson(arrival_rate); 
+	return poisson(arrival_rate);
 }
 
-double VM :: getNextServiceTime()
+float VM :: getNextServiceTime()
 {
-	return (double) expon(service_rate);
+	float st = expon(service_rate);
+	*st_file << st << endl;
+	return st;
+}
+
+void VM :: stop()
+{
+	st_file->close();
+}
+
+VM :: ~VM()
+{
+	delete st_file;
 }

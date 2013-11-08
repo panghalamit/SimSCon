@@ -2,20 +2,31 @@
 #define VM_H
 
 #include "common.h"
+#include <fstream>
+#include <cstring>
+#include <string>
+#include <sstream>
+#include <cstdlib>
+#include <iostream>
+using namespace std;
 
 class VM
 {
-	double arrival_rate;
-	double service_rate;
+	float arrival_rate;
+	float service_rate;
 	int index;
+	ofstream *st_file;
+
   public:
-	VM(double, double, int);
+	VM(float, float, int);
+	~VM();
 	VM(const VM&);
-	double getArrivalRate();
-	double getServiceRate();
-	double getNextInterArrivalTime();
-	double getNextServiceTime();
+	float getArrivalRate();
+	float getServiceRate();
+	float getNextInterArrivalTime();
+	float getNextServiceTime();
 	int getIndex();
+	void stop();
 };
 
 #endif

@@ -1,5 +1,5 @@
 #ifndef SIMULATION_H
-#define SIMULATION_H 
+#define SIMULATION_H
 
 #include <queue>
 #include <vector>
@@ -13,11 +13,13 @@ class Simulation
 {
 	vector<VM*> vmlist;
 	priority_queue<Event> event_list;
+
   public:
 	Simulation(SimData *);
 	Event getNextEvent(Event);
 	void start();
-	void run(double stop_time);
+	void run(double);
+	void stop();
 };
 
 #endif

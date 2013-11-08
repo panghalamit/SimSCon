@@ -16,4 +16,5 @@ bin/*
 
 # input/output files
 input
-output 
+output
+results/*.txt

@@ -30,5 +30,14 @@ void Simulation :: run(double stop_time)
 		event_list.pop();
 	}
 
-	cout<<"Simulation completed \\m/"<<endl;
+	cout<<"Simulation completed..."<<endl;
+}
+
+void Simulation :: stop ()
+{
+	for(unsigned int i=0; i<vmlist.size(); i++)
+	{
+		vmlist[i]->stop();
+		delete vmlist[i];
+	}
 }

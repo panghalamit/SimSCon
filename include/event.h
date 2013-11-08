@@ -4,17 +4,18 @@
 #include <iostream>
 using namespace std;
 
-typedef enum{ARRIVAL=0, DEPARTURE} EventType; 
+typedef enum{ARRIVAL=0, DEPARTURE} EventType;
 
 class Event
 {
 	EventType etype;
-	double stime;
+	float stime;
 	int vm_index;
+
   public:
-	Event(EventType, double, int);
+	Event(EventType, float, int);
 	bool operator<(const Event) const;
-	double getTime();
+	float getTime();
 	int getVMIndex();
 	EventType getEventType();
 	void printDetails();

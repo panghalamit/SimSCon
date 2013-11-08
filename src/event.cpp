@@ -1,6 +1,6 @@
 #include "event.h"
 
-Event :: Event(EventType e, double t, int vmi)
+Event :: Event(EventType e, float t, int vmi)
 {
 	etype = e;
 	stime = t;
@@ -15,9 +15,9 @@ bool Event :: operator<(const Event e) const
 EventType Event :: getEventType()
 {
 	return etype;
-} 
+}
 
-double Event :: getTime()
+float Event :: getTime()
 {
 	return stime;
 }
