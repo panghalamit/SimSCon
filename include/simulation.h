@@ -16,10 +16,10 @@ class Simulation
 	priority_queue<Event> event_list;
 	SimData *s_data;
 	int **policy;
+	float sim_time;
 
   public:
 	Simulation(SimData *);
-	Event getNextEvent(Event);
 	void start();
 	void run(double);
 	void stop();
