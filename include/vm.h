@@ -8,9 +8,13 @@
 #include <cstdlib>
 #include <iostream>
 #include <list>
-#include "simdata.h"
+#include "simsdata.h"
 #include "common.h"
+
+#include "config.h"
 #include "policy.h"
+#include "khanna.h"
+#include "simdata.h"
 using namespace std;
 
 class VM
@@ -33,7 +37,7 @@ class VM
 	float getArrivalRate();
 	float getServiceRate();
 	float getNextInterArrivalTime();
-	float getNextServiceTime(SimData*, Policy*, float, bool);
+	float getNextServiceTime(SimSData*, Policy*, float, bool);
 	int getIndex();
 	float getAvgWaitingTime();
 	float getAvgResponseTime();

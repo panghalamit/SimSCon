@@ -56,26 +56,26 @@ float VM :: getNextInterArrivalTime()
 	return expon(1/arrival_rate);
 }
 
-float VM :: getNextServiceTime(SimData *sdata, Policy* policy, float current_time, bool mig)
+float VM :: getNextServiceTime(SimSData *ssdata, Policy* policy, float current_time, bool mig)
 {
 	float st = expon(1/service_rate);
-	int phase_num = ((int)(current_time/PHASE_LENGTH))%(sdata->getNumPhases());
+	int phase_num = ((int)(current_time/PHASE_LENGTH))%(ssdata->getNumPhases());
 	vector<int> vm_to_pm_map = policy->getMapping(phase_num);
-	vector<int mig_list = policy->getMigrationList(phase_num);
+	vector<int> mig_list = policy->getMigrationList(phase_num);
 	int pm = vm_to_pm_map[index];
 
 	float sum_rho = 0;
-	for(int i=0; i<sdata->getNumVM(); i++)
+	for(int i=0; i<ssdata->getNumVM(); i++)
 	{
 		if(vm_to_pm_map[i] == pm)
-			sum_rho += (sdata->getArrivalRate(i)/sdata->getFixedServiceRate(i));
+			sum_rho += (ssdata->getArrivalRate(i)/ssdata->getFixedServiceRate(i));
 
 		if(mig)
-			if((mig_list[i] == pm) || (mig_list[i] != -1 && vm_to_pm_map[i] == pm)
-				sum_rho += MOHCPUINTENSIVE * (sdata->getArrivalRate(i)/sdata->getFixedServiceRate(i));
+			if((mig_list[i] == pm) || ((mig_list[i] != -1) && (vm_to_pm_map[i] == pm)))
+				sum_rho += MOHCPUINTENSIVE * (ssdata->getArrivalRate(i)/ssdata->getFixedServiceRate(i));
 	}
 
-	st = st/(arrival_rate/service_rate)*sum_rho*;
+	st = st/(arrival_rate/service_rate)*sum_rho;
 	*st_file << st << endl;
 	return st;
 }

@@ -5,9 +5,14 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 #include "config.h"
 #include "event.h"
 #include "vm.h"
+#include "simsdata.h"
+
+#include "policy.h"
+#include "khanna.h"
 #include "simdata.h"
 using namespace std;
 
@@ -15,13 +20,13 @@ class Simulation
 {
 	vector<VM*> vmlist;
 	priority_queue<Event> event_list;
-	SimData *s_data;
+	SimSData *ssdata;
 	Policy *policy;
 	float sim_time;
 	bool migration_phase;
 
   public:
-	Simulation(SimData*);
+	Simulation(SimSData*);
 	void start();
 	void run(double);
 	void stop();

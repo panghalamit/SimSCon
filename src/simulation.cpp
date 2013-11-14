@@ -1,11 +1,11 @@
 #include "simulation.h"
 
-Simulation :: Simulation(SimData *sdata)
+Simulation :: Simulation(SimSData *ssdata)
 {
-	s_data = sdata;
-	for(int i=0; i<sdata->getNumVM(); i++)
-		vmlist.push_back(new VM(sdata->getArrivalRate(i), sdata->getFixedServiceRate(i), i));
-	policy = new Khanna(sdata);
+	this->ssdata = ssdata;
+	for(int i=0; i<ssdata->getNumVM(); i++)
+		vmlist.push_back(new VM(ssdata->getArrivalRate(i), ssdata->getFixedServiceRate(i), i));
+	policy = new Khanna(ssdata->getSimData());
 }
 
 void Simulation :: start()
@@ -20,6 +20,8 @@ void Simulation :: start()
 
 void Simulation :: run(double stop_time)
 {
+	policy->run((int)ceil(stop_time/PHASE_LENGTH));
+
 	while(!event_list.empty())
 	{
 		Event e = event_list.top();
@@ -36,7 +38,7 @@ void Simulation :: run(double stop_time)
 				event_list.push(Event(ARRIVAL, sim_time+vmlist[e.getVMIndex()]->getNextInterArrivalTime(), e.getVMIndex()));
 				if(vmlist[e.getVMIndex()]->isIdle())
 				{
-					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(s_data, policy, sim_time, migration_phase);
+					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
 				vmlist[e.getVMIndex()]->update_on_arrival(sim_time, serv_time);
@@ -45,7 +47,7 @@ void Simulation :: run(double stop_time)
 			case DEPARTURE:
 				if(!vmlist[e.getVMIndex()]->isEmptyQueue())
 				{
-					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(s_data, policy, sim_time, migration_phase);
+					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
 				vmlist[e.getVMIndex()]->update_on_departure(sim_time, serv_time);
