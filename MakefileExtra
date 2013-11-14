@@ -1,0 +1,20 @@
+# relative application sub-directories
+APPS = simcon simscon
+
+all: $(patsubst %,all-%,$(APPS))
+
+$(patsubst %,all-%,$(APPS)):
+	@echo "Building $(patsubst all-%,%,$@)"
+	@$(MAKE) -C $(patsubst all-%,%,$@)
+
+clean: $(patsubst %,clean-%,$(APPS))
+
+$(patsubst %,clean-%,$(APPS)):
+	@echo "Building $(patsubst clean-%,%,$@)"
+	@$(MAKE) clean -C $(patsubst clean-%,%,$@)
+
+distclean: $(patsubst %,distclean-%,$(APPS))
+
+$(patsubst %,distclean-%,$(APPS)):
+	@echo "Building $(patsubst distclean-%,%,$@)"
+	@$(MAKE) distclean -C $(patsubst distclean-%,%,$@)
