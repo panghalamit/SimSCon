@@ -5,7 +5,7 @@ Simulation :: Simulation(SimData *sdata)
 	s_data = sdata;
 	for(int i=0; i<sdata->getNumVM(); i++)
 		vmlist.push_back(new VM(sdata->getArrivalRate(i), sdata->getFixedServiceRate(i), i));
-	policy = new Policy();
+	policy = new Khanna(sdata);
 }
 
 void Simulation :: start()

@@ -9,7 +9,6 @@
 #include "event.h"
 #include "vm.h"
 #include "simdata.h"
-#include "policy.h"
 using namespace std;
 
 class Simulation
@@ -22,7 +21,7 @@ class Simulation
 	bool migration_phase;
 
   public:
-	Simulation(SimData *);
+	Simulation(SimData*);
 	void start();
 	void run(double);
 	void stop();

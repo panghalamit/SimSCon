@@ -10,6 +10,7 @@
 #include <list>
 #include "simdata.h"
 #include "common.h"
+#include "policy.h"
 using namespace std;
 
 class VM
