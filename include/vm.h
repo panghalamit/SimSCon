@@ -32,7 +32,7 @@ class VM
 	float getArrivalRate();
 	float getServiceRate();
 	float getNextInterArrivalTime();
-	float getNextServiceTime(SimData*, int*);
+	float getNextServiceTime(SimData*, Policy*, float, bool);
 	int getIndex();
 	float getAvgWaitingTime();
 	float getAvgResponseTime();

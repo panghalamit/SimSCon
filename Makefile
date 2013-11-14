@@ -10,7 +10,7 @@ SDIR = src
 ODIR = bin
 LIBS = -lm
 
-_DEPS = event.h simulation.h vm.h common.h lcgrand.h simdata.h
+_DEPS = event.h simulation.h vm.h common.h lcgrand.h simdata.h config.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ = event.o vm.o simulation.o common.o lcgrand.o simdata.o

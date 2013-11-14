@@ -9,6 +9,7 @@
 #include "event.h"
 #include "vm.h"
 #include "simdata.h"
+#include "policy.h"
 using namespace std;
 
 class Simulation
@@ -16,8 +17,9 @@ class Simulation
 	vector<VM*> vmlist;
 	priority_queue<Event> event_list;
 	SimData *s_data;
-	int **policy;
+	Policy *policy;
 	float sim_time;
+	bool migration_phase;
 
   public:
 	Simulation(SimData *);

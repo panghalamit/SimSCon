@@ -56,19 +56,20 @@ float VM :: getNextInterArrivalTime()
 	return expon(1/arrival_rate);
 }
 
-float VM :: getNextServiceTime(SimData *sdata, int *vm_to_pm_map)
+float VM :: getNextServiceTime(SimData *sdata, Policy* poliy, float current_time, bool mig)
 {
 	float st = expon(1/service_rate);
-	int pm = vm_to_pm_map[index];
+	// int pm = vm_to_pm_map[index];
 
-	float sum_rho = 0;
-	for(int i=0; i<sdata->getNumVM(); i++)
-	{
-		if(vm_to_pm_map[i] == pm)
-			sum_rho += (sdata->getArrivalRate(i)/sdata->getFixedServiceRate(i));
-	}
+	// float sum_rho = 0;
+	// for(int i=0; i<sdata->getNumVM(); i++)
+	// {
+	// 	if(vm_to_pm_map[i] == pm)
+	// 		sum_rho += (sdata->getArrivalRate(i)/sdata->getFixedServiceRate(i));
+	// }
 
-	st = st/(arrival_rate/service_rate)*sum_rho;
+	// // @todo
+	// st = st/(arrival_rate/service_rate)*sum_rho*(1+mig);
 	*st_file << st << endl;
 	return st;
 }
