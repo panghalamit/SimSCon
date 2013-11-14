@@ -11,9 +11,10 @@ int main()
 	SimSData *ssdata = new SimSData(num_vms, num_phases);
 	ssdata->readInput();
 
+	setStream(14);
 	Simulation sim(ssdata);
 	sim.start();
-	sim.run(50);
+	sim.run(200);
 	sim.stop();
 
 	delete ssdata;

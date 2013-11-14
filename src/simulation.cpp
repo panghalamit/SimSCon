@@ -39,7 +39,7 @@ void Simulation :: run(double stop_time)
 				event_list.push(Event(ARRIVAL, sim_time+vmlist[e.getVMIndex()]->getNextInterArrivalTime(phase_num), e.getVMIndex()));
 				if(vmlist[e.getVMIndex()]->isIdle())
 				{
-					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, migration_phase);
+					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
 				vmlist[e.getVMIndex()]->update_on_arrival(sim_time, serv_time);
@@ -48,7 +48,7 @@ void Simulation :: run(double stop_time)
 			case DEPARTURE:
 				if(!vmlist[e.getVMIndex()]->isEmptyQueue())
 				{
-					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, migration_phase);
+					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
 				vmlist[e.getVMIndex()]->update_on_departure(sim_time, serv_time);

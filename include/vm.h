@@ -38,7 +38,7 @@ class VM
 	float getArrivalRate(int phase_num);
 	float getServiceRate();
 	float getNextInterArrivalTime(int phase_num);
-	float getNextServiceTime(SimSData*, Policy*, int, bool);
+	float getNextServiceTime(SimSData*, Policy*, int, float, bool);
 	int getIndex();
 	float getAvgWaitingTime();
 	float getAvgResponseTime();

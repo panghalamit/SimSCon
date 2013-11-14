@@ -49,7 +49,7 @@ float VM :: getNextInterArrivalTime(int phase_num)
 	return expon(1/arrival_rate[phase_num%num_phases]);
 }
 
-float VM :: getNextServiceTime(SimSData *ssdata, Policy* policy, int phase_num, bool mig)
+float VM :: getNextServiceTime(SimSData *ssdata, Policy* policy, int phase_num, float sim_time, bool mig)
 {
 	int mod_phase_num = phase_num%num_phases;
 	float st = expon(1/service_rate);
@@ -69,7 +69,7 @@ float VM :: getNextServiceTime(SimSData *ssdata, Policy* policy, int phase_num, 
 	}
 
 	st = st/(arrival_rate[mod_phase_num]/service_rate)*sum_rho;
-	*st_file << st << endl;
+	*st_file << sim_time << "\t" << st << endl;
 	return st;
 }
 
