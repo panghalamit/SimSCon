@@ -10,11 +10,6 @@ VM :: VM(SimSData *ssdata, int vmi)
 
 	service_rate = ssdata->getFixedServiceRate(vmi);
 	index = vmi;
-	busy = false;
-
-	cum_waiting_time=0; delayed_customers = 0;
-	cum_response_time=0; total_departures = 0;
-	cum_queue_length=0; last_update_time = 0;
 
 	st_file = new ofstream((string("results/service_time_vm") +
 						static_cast<ostringstream*>(&(ostringstream()<<index))->str() + string(".txt")).c_str());
@@ -23,6 +18,16 @@ VM :: VM(SimSData *ssdata, int vmi)
 		cout<<"error occured, cannot open file!"<<endl;
 		exit(1);
 	}
+}
+
+void VM :: init()
+{
+	cum_waiting_time=0; delayed_customers = 0;
+	cum_response_time=0; total_departures = 0;
+	cum_queue_length=0; last_update_time = 0;
+	busy = false;
+	server_queue.clear();
+	total_reqs = 0;
 }
 
 VM :: VM(const VM &vm)

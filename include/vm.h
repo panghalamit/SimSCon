@@ -35,6 +35,7 @@ class VM
 	VM(SimSData*, int);
 	~VM();
 	VM(const VM&);
+	void init();
 	float getArrivalRate(int phase_num);
 	float getServiceRate();
 	float getNextInterArrivalTime(int phase_num);

@@ -10,8 +10,14 @@ Simulation :: Simulation(SimSData *ssdata)
 
 void Simulation :: start()
 {
+	for(unsigned int i=0; i<vmlist.size(); i++)
+		vmlist[i]->init();
 	migration_phase = false;
 	phase_num = -1;
+	sim_time = 0;
+
+	while(!event_list.empty())
+		event_list.pop();
 	event_list.push(Event(PHASE_BEGIN, 0, 0));
 	event_list.push(Event(MIG_BEGIN, PHASE_LENGTH*(1-MIGRATIONDURATION), 0));
 	for(unsigned int i=0; i<vmlist.size(); i++)
@@ -77,14 +83,19 @@ void Simulation :: stop ()
 	ofstream stat_file("results/stats.txt");
 	if(stat_file.is_open())
 	{
-		for(unsigned int i=0; i<vmlist.size(); i++)
-		{
-			stat_file << "** VM " << i << " stats **" << endl;
-			stat_file << "average response time: " << vmlist[i]->getAvgResponseTime() << endl;
-			stat_file << "average waiting time: " << vmlist[i]->getAvgWaitingTime() << endl;
-			stat_file << "average queue length: " << vmlist[i]->getAvgQLength(sim_time) << endl;
+		// for(unsigned int i=0; i<vmlist.size(); i++)
+		// {
+			// stat_file << "** VM " << i << " stats **" << endl;
+			// stat_file << "average response time: " << vmlist[i]->getAvgResponseTime() << endl;
+			// stat_file << "average waiting time: " << vmlist[i]->getAvgWaitingTime() << endl;
+			// stat_file << "average queue length: " << vmlist[i]->getAvgQLength(sim_time) << endl;
+			// stat_file << endl;
+
+			stat_file << vmlist[2]->getAvgResponseTime() << "\t";
+			stat_file << vmlist[2]->getAvgWaitingTime() << "\t";
+			stat_file << vmlist[2]->getAvgQLength(sim_time);
 			stat_file << endl;
-		}
+		// }
 		stat_file.close();
 	} else
 	{
