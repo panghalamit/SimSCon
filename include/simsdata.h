@@ -9,6 +9,7 @@ input stream and provides API to access the data
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include "utils.h"
 #include "simdata.h"
 using namespace std;
 
@@ -16,8 +17,8 @@ class SimSData
 {
     int num_vms;
     int num_phases;
-    float *arrival_rates;
-    float *service_rates;
+    Matrix<float> *arrival_rates;
+    float* service_rates;
     SimData *sdata;
 
   public:
@@ -26,7 +27,7 @@ class SimSData
     void readInput();
     int getNumVM();
     int getNumPhases();
-    float getArrivalRate(int);
+    float getArrivalRate(int, int);
     float getFixedServiceRate(int);
     SimData* getSimData();
 };

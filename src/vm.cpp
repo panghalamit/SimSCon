@@ -1,10 +1,15 @@
 #include "vm.h"
 
-VM :: VM(float arr, float sr, int i)
+VM :: VM(SimSData *ssdata, int vmi)
 {
-	arrival_rate = arr;
-	service_rate = sr;
-	index = i;
+	num_phases = ssdata->getNumPhases();
+	arrival_rate = new float[num_phases];
+
+	for(int i=0; i<num_phases; i++)
+		arrival_rate[i] = ssdata->getArrivalRate(i, vmi);
+
+	service_rate = ssdata->getFixedServiceRate(vmi);
+	index = vmi;
 	busy = false;
 
 	cum_waiting_time=0; delayed_customers = 0;
@@ -22,8 +27,6 @@ VM :: VM(float arr, float sr, int i)
 
 VM :: VM(const VM &vm)
 {
-	arrival_rate = vm.arrival_rate;
-	service_rate = vm.service_rate;
 	index = vm.index;
 
 	cum_waiting_time = vm.cum_waiting_time;
@@ -36,46 +39,36 @@ VM :: VM(const VM &vm)
 		server_queue.push_back(*it);
 }
 
-float VM :: getArrivalRate()
-{
-	return arrival_rate;
-}
-
-float VM :: getServiceRate()
-{
-	return service_rate;
-}
-
 int VM :: getIndex()
 {
 	return index;
 }
 
-float VM :: getNextInterArrivalTime()
+float VM :: getNextInterArrivalTime(int phase_num)
 {
-	return expon(1/arrival_rate);
+	return expon(1/arrival_rate[phase_num%num_phases]);
 }
 
-float VM :: getNextServiceTime(SimSData *ssdata, Policy* policy, float current_time, bool mig)
+float VM :: getNextServiceTime(SimSData *ssdata, Policy* policy, int phase_num, bool mig)
 {
+	int mod_phase_num = phase_num%num_phases;
 	float st = expon(1/service_rate);
-	int phase_num = ((int)(current_time/PHASE_LENGTH))%(ssdata->getNumPhases());
-	vector<int> vm_to_pm_map = policy->getMapping(phase_num);
-	vector<int> mig_list = policy->getMigrationList(phase_num);
+	vector<int> vm_to_pm_map = policy->getMapping(mod_phase_num);
+	vector<int> mig_list = policy->getMigrationList(mod_phase_num);
 	int pm = vm_to_pm_map[index];
 
 	float sum_rho = 0;
 	for(int i=0; i<ssdata->getNumVM(); i++)
 	{
 		if(vm_to_pm_map[i] == pm)
-			sum_rho += (ssdata->getArrivalRate(i)/ssdata->getFixedServiceRate(i));
+			sum_rho += (ssdata->getArrivalRate(mod_phase_num, i)/ssdata->getFixedServiceRate(i));
 
 		if(mig)
 			if((mig_list[i] == pm) || ((mig_list[i] != -1) && (vm_to_pm_map[i] == pm)))
-				sum_rho += MOHCPUINTENSIVE * (ssdata->getArrivalRate(i)/ssdata->getFixedServiceRate(i));
+				sum_rho += MOHCPUINTENSIVE * (ssdata->getArrivalRate(mod_phase_num, i)/ssdata->getFixedServiceRate(i));
 	}
 
-	st = st/(arrival_rate/service_rate)*sum_rho;
+	st = st/(arrival_rate[mod_phase_num]/service_rate)*sum_rho;
 	*st_file << st << endl;
 	return st;
 }
@@ -158,5 +151,6 @@ void VM :: stop()
 
 VM :: ~VM()
 {
+	delete [] arrival_rate;
 	delete st_file;
 }

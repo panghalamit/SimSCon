@@ -4,17 +4,18 @@ Simulation :: Simulation(SimSData *ssdata)
 {
 	this->ssdata = ssdata;
 	for(int i=0; i<ssdata->getNumVM(); i++)
-		vmlist.push_back(new VM(ssdata->getArrivalRate(i), ssdata->getFixedServiceRate(i), i));
+		vmlist.push_back(new VM(ssdata, i));
 	policy = new Khanna(ssdata->getSimData());
 }
 
 void Simulation :: start()
 {
 	migration_phase = false;
+	phase_num = -1;
 	event_list.push(Event(PHASE_BEGIN, 0, 0));
 	event_list.push(Event(MIG_BEGIN, PHASE_LENGTH*(1-MIGRATIONDURATION), 0));
 	for(unsigned int i=0; i<vmlist.size(); i++)
-		event_list.push(Event(ARRIVAL, vmlist[i]->getNextInterArrivalTime(), vmlist[i]->getIndex()));
+		event_list.push(Event(ARRIVAL, vmlist[i]->getNextInterArrivalTime(0), vmlist[i]->getIndex()));
 	cout<<"Yay!! Simulation started..."<<endl;
 }
 
@@ -35,10 +36,10 @@ void Simulation :: run(double stop_time)
 		switch(e.getEventType())
 		{
 			case ARRIVAL:
-				event_list.push(Event(ARRIVAL, sim_time+vmlist[e.getVMIndex()]->getNextInterArrivalTime(), e.getVMIndex()));
+				event_list.push(Event(ARRIVAL, sim_time+vmlist[e.getVMIndex()]->getNextInterArrivalTime(phase_num), e.getVMIndex()));
 				if(vmlist[e.getVMIndex()]->isIdle())
 				{
-					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, sim_time, migration_phase);
+					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
 				vmlist[e.getVMIndex()]->update_on_arrival(sim_time, serv_time);
@@ -47,7 +48,7 @@ void Simulation :: run(double stop_time)
 			case DEPARTURE:
 				if(!vmlist[e.getVMIndex()]->isEmptyQueue())
 				{
-					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, sim_time, migration_phase);
+					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
 				vmlist[e.getVMIndex()]->update_on_departure(sim_time, serv_time);
@@ -56,6 +57,7 @@ void Simulation :: run(double stop_time)
 			case PHASE_BEGIN:
 				event_list.push(Event(PHASE_BEGIN, sim_time+PHASE_LENGTH, e.getVMIndex()+1));
 				migration_phase = false;
+				phase_num++;
 				break;
 
 			case MIG_BEGIN:
@@ -91,9 +93,12 @@ void Simulation :: stop ()
 	}
 
 	for(unsigned int i=0; i<vmlist.size(); i++)
-	{
 		vmlist[i]->stop();
+}
+
+Simulation :: ~Simulation()
+{
+	for(unsigned int i=0; i<vmlist.size(); i++)
 		delete vmlist[i];
-	}
 	delete policy;
 }

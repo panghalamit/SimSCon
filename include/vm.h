@@ -19,9 +19,10 @@ using namespace std;
 
 class VM
 {
-	float arrival_rate;
+	float *arrival_rate;
 	float service_rate;
 	int index;
+	int num_phases;
 	ofstream *st_file;
 	bool busy;
 	list<float> server_queue;
@@ -31,13 +32,13 @@ class VM
 	int total_reqs;
 
   public:
-	VM(float, float, int);
+	VM(SimSData*, int);
 	~VM();
 	VM(const VM&);
-	float getArrivalRate();
+	float getArrivalRate(int phase_num);
 	float getServiceRate();
-	float getNextInterArrivalTime();
-	float getNextServiceTime(SimSData*, Policy*, float, bool);
+	float getNextInterArrivalTime(int phase_num);
+	float getNextServiceTime(SimSData*, Policy*, int, bool);
 	int getIndex();
 	float getAvgWaitingTime();
 	float getAvgResponseTime();

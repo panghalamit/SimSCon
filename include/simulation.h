@@ -23,10 +23,12 @@ class Simulation
 	SimSData *ssdata;
 	Policy *policy;
 	float sim_time;
+	int phase_num;
 	bool migration_phase;
 
   public:
 	Simulation(SimSData*);
+	~Simulation();
 	void start();
 	void run(double);
 	void stop();
