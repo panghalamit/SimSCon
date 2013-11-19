@@ -4,17 +4,26 @@ VM :: VM(SimSData *ssdata, int vmi)
 {
 	num_phases = ssdata->getNumPhases();
 	arrival_rate = new float[num_phases];
-
+	cum_waiting_time=new float[num_phases];
+	cum_response_time=new float[num_phases];
+	cum_queue_length=new float[num_phases];
+	delayed_customers = new int[num_phases];
+	total_departures = new int[num_phases];
+	
 	for(int i=0; i<num_phases; i++)
+	{
 		arrival_rate[i] = ssdata->getArrivalRate(i, vmi);
+		cum_waiting_time[i] = 0;
+		cum_response_time[i] = 0;
+		cum_queue_length[i] = 0;
+		delayed_customers[i] = 0;
+		total_departures[i] = 0;
+    }
 
 	service_rate = ssdata->getFixedServiceRate(vmi);
 	index = vmi;
 	busy = false;
-
-	cum_waiting_time=0; delayed_customers = 0;
-	cum_response_time=0; total_departures = 0;
-	cum_queue_length=0; last_update_time = 0;
+	last_update_time = 0;
 
 	st_file = new ofstream((string("results/service_time_vm") +
 						static_cast<ostringstream*>(&(ostringstream()<<index))->str() + string(".txt")).c_str());
@@ -94,19 +103,19 @@ float VM :: getTopInQ()
 }
 
 
-float VM :: getAvgWaitingTime()
+float VM :: getAvgWaitingTime(int phase_num)
 {
-	return cum_waiting_time/delayed_customers;
+	return cum_waiting_time[phase_num]/delayed_customers[phase_num];
 }
 
-float VM :: getAvgResponseTime()
+float VM :: getAvgResponseTime(int phase_num)
 {
-	return (cum_response_time/total_departures);
+	return (cum_response_time[phase_num]/total_departures[phase_num]);
 }
 
-float VM :: getAvgQLength(float current_time)
+float VM :: getAvgQLength(int phase_num)
 {
-	return (cum_queue_length + (current_time - last_update_time) * server_queue.size())/current_time;
+	return (cum_queue_length[phase_num]/PHASE_DURATION;
 }
 
 int VM :: getTotalReqs()
@@ -114,33 +123,35 @@ int VM :: getTotalReqs()
 	return total_reqs;
 }
 
-void VM :: update_on_arrival(float current_time, float serv_time)
+void VM :: update_on_arrival(float current_time, float serv_time, int phase_num)
 {
+	phase_num %= num_phases;
 	total_reqs++;
 	if(busy)
 	{
 		server_queue.push_back(current_time);
-		cum_queue_length += server_queue.size() * (current_time - last_update_time);
+		cum_queue_length[phase_num] += server_queue.size() * (current_time - last_update_time);
 		last_update_time = current_time;
 	} else
 	{
 		busy = true;
-		total_departures++;
-		cum_response_time += serv_time;
+		total_departures[phase_num]++;
+		cum_response_time[phase_num] += serv_time;
 	}
 }
 
-void VM :: update_on_departure(float current_time, float serv_time)
+void VM :: update_on_departure(float current_time, float serv_time, int phase_num)
 {
+    phase_num %= num_phases;
 	if(server_queue.size() > 0)
 	{
-		delayed_customers++; cum_waiting_time += current_time - server_queue.front();
-		total_departures++; cum_response_time += serv_time + current_time - server_queue.front();
+		delayed_customers[phase_num]++; cum_waiting_time[phase_num] += current_time - server_queue.front();
+		total_departures[phase_num]++; cum_response_time[phase_num] += serv_time + current_time - server_queue.front();
 		server_queue.pop_front();
 	} else
 		busy = false;
 
-	cum_queue_length += server_queue.size() * (current_time - last_update_time);
+	cum_queue_length[phase_num] += server_queue.size() * (current_time - last_update_time);
 	last_update_time = current_time;
 }
 

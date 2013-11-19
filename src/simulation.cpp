@@ -42,7 +42,7 @@ void Simulation :: run(double stop_time)
 					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
-				vmlist[e.getVMIndex()]->update_on_arrival(sim_time, serv_time);
+				vmlist[e.getVMIndex()]->update_on_arrival(sim_time, serv_time, phase_num);
 				break;
 
 			case DEPARTURE:
@@ -51,7 +51,7 @@ void Simulation :: run(double stop_time)
 					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
-				vmlist[e.getVMIndex()]->update_on_departure(sim_time, serv_time);
+				vmlist[e.getVMIndex()]->update_on_departure(sim_time, serv_time, phase_num);
 				break;
 
 			case PHASE_BEGIN:
@@ -80,13 +80,18 @@ void Simulation :: stop ()
 		for(unsigned int i=0; i<vmlist.size(); i++)
 		{
 			stat_file << "** VM " << i << " stats **" << endl;
-			stat_file << "average response time: " << vmlist[i]->getAvgResponseTime() << endl;
-			stat_file << "average waiting time: " << vmlist[i]->getAvgWaitingTime() << endl;
-			stat_file << "average queue length: " << vmlist[i]->getAvgQLength(sim_time) << endl;
+			for(int j=0; j<ssdata->getNumPhases(); j++)
+			{
+				stat_file << "for phase " << j << "" <<endl;
+				stat_file << "average response time: " << vmlist[i]->getAvgResponseTime(j) << endl;
+				stat_file << "average waiting time: " << vmlist[i]->getAvgWaitingTime(j) << endl;
+				stat_file << "average queue length: " << vmlist[i]->getAvgQLength(j) << endl;
+				stat_file << endl;
+			}
 			stat_file << endl;
 		}
 		stat_file.close();
-	} else
+	} els;
 	{
 		cout<<"error occured! unable to open stats.txt!"<<endl;
 		exit(1);
