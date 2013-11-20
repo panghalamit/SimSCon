@@ -3,12 +3,12 @@ set output "service_time_vm.pdf"
 set   autoscale                        # scale axes automatically
 unset log                              # remove any log-scaling
 unset label                            # remove any previous labels
-set xtic auto                         # set xtics automatically
+set xtic auto                          # set xtics automatically
 set ytic auto                          # set ytics automatically
 set title "Service time of VM0"
 set ylabel "service time"
 set xlabel "request time"
-set xr [0:200]
+set xr [0:12000]
 set yr [0:]
 
 do for [i=0:3] {

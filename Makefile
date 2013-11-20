@@ -13,13 +13,13 @@ PODIR = ../simcon/bin
 LIBS = -lm
 
 _DEPS = event.h simulation.h vm.h common.h lcgrand.h simsdata.h staticmap.h
-_PDEPS = simdata.h utils.h algo.h stateIterator.h state.h config.h policy.h
+_PDEPS = simdata.h utils.h algo.h stateIterator.h state.h config.h policy.h khanna.h mdp.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS)) $(patsubst %,$(PIDIR)/%,$(_PDEPS))
 
 _OBJ = event.o vm.o simulation.o common.o lcgrand.o simsdata.o staticmap.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-_POBJ = simdata.o utils.o algo.o stateIterator.o state.o policy.o
+_POBJ = simdata.o utils.o algo.o stateIterator.o state.o policy.o khanna.o mdp.o
 POBJ = $(patsubst %,$(PODIR)/%,$(_POBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
@@ -41,6 +41,6 @@ distclean: clean
 	rm -f results/*.pdf
 
 plot:
-	cd results && gnuplot service_time_plot.p
+	cd results && gnuplot service_time_plot.p response_time_plot.p phase_plot.p
 
 .PHONY: clean

@@ -18,13 +18,15 @@ using namespace std;
 class VM
 {
 	int index;
+	int num_vms;
+	int num_phases;
 	float threshold;
 	float revenue;
 	float penalty;
 	float *arrival_rate;
 	float service_rate;
 	float *cum_waiting_time; int *delayed_customers;
-	float *cum_response_time; int *total_departures;
+	float *cum_response_time; int *total_departures; int *total_dep_phase;
 	float *cum_queue_length; float *last_update_time;
 	int *total_reqs;
 	int *num_sla_violated;
@@ -35,7 +37,6 @@ class VM
 	list<float> server_queue;
 
   public:
-  	int num_phases;
 	VM(SimSData*, int);
 	~VM();
 	int getIndex();
@@ -57,7 +58,7 @@ class VM
 	float getOverallResponseTime();
 	float getOverallWaitingTime();
 	float getOverallQueueLength(float);
-	float getOverallProfit(float);
+	float getOverallProfit();
 	void stop();
 };
 

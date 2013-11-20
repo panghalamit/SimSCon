@@ -9,10 +9,12 @@
 #include "config.h"
 #include "event.h"
 #include "vm.h"
+#include "simdata.h"
 #include "simsdata.h"
 #include "policy.h"
 #include "staticmap.h"
-#include "simdata.h"
+#include "khanna.h"
+#include "mdp.h"
 using namespace std;
 
 class Simulation

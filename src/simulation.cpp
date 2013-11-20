@@ -5,7 +5,7 @@ Simulation::Simulation(SimSData *ssdata)
 	this->ssdata = ssdata;
 	for(int i=0; i<ssdata->getNumVM(); i++)
 		vmlist.push_back(new VM(ssdata, i));
-	policy = new StaticMap(ssdata->getSimData());
+	policy = new Khanna(ssdata->getSimData());
 }
 
 void Simulation::start()
@@ -26,9 +26,6 @@ void Simulation::run(double stop_time)
 
 	while(!event_list.empty())
 	{
-		// for(unsigned int i=0; i<vmlist.size(); i++)
-		// cout<<vmlist[i]->num_phases<<" ";
-
 		Event e = event_list.top();
 		sim_time = e.getTime();
 		float serv_time = -1;
@@ -36,7 +33,7 @@ void Simulation::run(double stop_time)
 		if(sim_time > stop_time)
 			break;
 
-		//e.printDetails();
+		// e.printDetails();
 		switch(e.getEventType())
 		{
 			case ARRIVAL:
@@ -82,55 +79,53 @@ void Simulation::stop()
 {
 	for(unsigned int i=0; i<vmlist.size(); i++)
 	{
-		cout << "** VM " << i << " stats **" << endl;
+		cout << endl << "** VM " << i << " stats **" << endl;
 		cout << "overall average response time: " << vmlist[i]->getOverallResponseTime() << endl;
 		cout << "overall average waiting time: " << vmlist[i]->getOverallWaitingTime() << endl;
 		cout << "overall average queue length: " << vmlist[i]->getOverallQueueLength(sim_time) << endl;
-		cout << "overall profit: " << vmlist[i]->getOverallProfit(sim_time) << endl;
-		cout << endl;
+		cout << "overall profit: " << vmlist[i]->getOverallProfit() << endl;
 	}
 
 	for(unsigned int i=0; i<vmlist.size(); i++)
 		vmlist[i]->stop();
-	cout<<sim_time<<endl;
-	FILE * stat;
-	stat = fopen("results/response_time_phase_log.txt", "w");
+
+	ofstream rt_file("results/response_time_phase.txt");
+	ofstream wt_file("results/waiting_time_phase.txt");
+	ofstream ql_file("results/queuelength_phase.txt");
+	ofstream profit_file("results/profit_phase.txt");
+
+	if(!(rt_file.is_open() && wt_file.is_open() && ql_file.is_open() && profit_file.is_open()))
+	{
+        cout<<"cannot open files, exiting!"<<endl;
+        exit(1);
+    }
+
 	for(int i=0; i<ssdata->getNumPhases(); i++)
 	{
 		for(int j=0; j<ssdata->getNumVM(); j++)
-			fprintf(stat, "%f\t", vmlist[j]->getAvgResponseTime(i));
-		fprintf(stat, "\n");
+		{
+			rt_file << vmlist[j]->getAvgResponseTime(i) << "\t";
+			wt_file << vmlist[j]->getAvgWaitingTime(i) << "\t";
+			ql_file << vmlist[j]->getAvgQLength(i, sim_time) << "\t";
+			profit_file << vmlist[j]->getAvgProfit(i, sim_time) << "\t";
+		}
+		rt_file << endl;
+		wt_file << endl;
+		ql_file << endl;
+		profit_file << endl;
 	}
-	fclose(stat);
-    stat = fopen("results/waiting_time_phase_log.txt", "w");
-	for(int i=0; i<ssdata->getNumPhases(); i++)
-	{
-		for(int j=0; j<ssdata->getNumVM(); j++)
-			fprintf(stat, "%f\t", vmlist[j]->getAvgWaitingTime(i));
-		fprintf(stat, "\n");
-	}
-	fclose(stat);
-	/* stat = fopen("results/queuelength_phase_log.txt", "w");
-	for(int i=0; i<ssdata->getNumPhases(); i++)
-	{
-		for(int j=0; j<ssdata->getNumVM(); j++)
-			fprintf(stat, "%f\t", vmlist[j]->getAvgQLength(i,sim_time));
-		fprintf(stat, "\n");
-	}
-	fclose(stat);*/
-	stat = fopen("results/profit_phase_log.txt", "w");
-	for(int i=0; i<ssdata->getNumPhases(); i++)
-	{
-		for(int j=0; j<ssdata->getNumVM(); j++)
-			fprintf(stat, "%f\t", vmlist[j]->getAvgProfit(i, sim_time));
-		fprintf(stat, "\n");
-	}
-	fclose(stat);
+
+	rt_file.close();
+	wt_file.close();
+	ql_file.close();
+	profit_file.close();
+
+	cout<<endl<<"profit from DSCP algorithm: "<<policy->getOverallProfit()<<endl;
 }
 
 Simulation::~Simulation()
 {
-	// for(unsigned int i=0; i<vmlist.size(); i++)
-	// 	delete vmlist[i];
+	for(unsigned int i=0; i<vmlist.size(); i++)
+		delete vmlist[i];
 	delete policy;
 }

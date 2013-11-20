@@ -9,10 +9,10 @@ using namespace std;
 class StaticMap : public Policy
 {
   public:
-  	StaticMap(SimData *s_data);
-	void run(int phases);
-	vector<int>* getMapping(int phase_number);
-	vector<int>* getMigrationList(int phase_number);
+  	StaticMap(SimData*);
+	void run(int);
+	void getMapping(int, vector<int>*);
+	void getMigrationList(int, vector<int>*);
 };
 
 #endif
