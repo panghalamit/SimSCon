@@ -8,7 +8,7 @@ set ytic auto                          # set ytics automatically
 set title "avg response time at vms during each phase"
 set ylabel "average response time"
 set xlabel "phase number"
-set xr [0:5]
+set xr [0:4]
 set yr [0:]
 plot  "response_time_phase.txt" using 1 title "VM0" with linespoint , \
 "response_time_phase.txt" using 2 title "VM1" with linespoint, \
@@ -26,7 +26,7 @@ set ytic auto                          # set ytics automatically
 set title "avg waiting time at vms during each phase"
 set ylabel "average waiting time"
 set xlabel "phase number"
-set xr [0:5]
+set xr [0:4]
 set yr [0:]
 plot  "waiting_time_phase.txt" using 1 title "VM0" with linespoint , \
 "waiting_time_phase.txt" using 2 title "VM1" with linespoint, \
@@ -45,7 +45,7 @@ set ytic auto                          # set ytics automatically
 set title "avg queue length at vms during each phase"
 set ylabel "average queue length"
 set xlabel "phase number"
-set xr [0:5]
+set xr [0:4]
 set yr [0:]
 plot  "queuelength_phase.txt" using 1 title "VM0" with linespoint , \
 "queuelength_phase.txt" using 2 title "VM1" with linespoint, \
@@ -63,9 +63,9 @@ set ytic auto                          # set ytics automatically
 set title "profit of vms during each phase"
 set ylabel "profit"
 set xlabel "phase number"
-set xr [0:5]
+set xr [0:4]
 set yr [0:]
-plot  "response_time_phase.txt" using 1 title "VM0" with linespoint , \
+plot  "profit_phase.txt" using 1 title "VM0" with linespoint , \
 "profit_phase.txt" using 2 title "VM1" with linespoint, \
 "profit_phase.txt" using 3 title "VM2" with linespoint, \
 "profit_phase.txt" using 4 title "VM3" with linespoint
