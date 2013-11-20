@@ -22,7 +22,6 @@ void Simulation::start()
 
 void Simulation::run(double stop_time)
 {
-	cout<<(int)ceil(stop_time/PHASE_LENGTH)<<endl;
 	policy->run((int)ceil(stop_time/PHASE_LENGTH));
 	policy->printPolicy();
 
@@ -35,7 +34,7 @@ void Simulation::run(double stop_time)
 		if(sim_time > stop_time)
 			break;
 
-		// e.printDetails();
+		e.printDetails();
 		switch(e.getEventType())
 		{
 			case ARRIVAL:

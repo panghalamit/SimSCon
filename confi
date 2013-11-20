@@ -1,0 +1,8 @@
+#!/bin/bash
+COUNTER=1
+while [ $COUNTER -lt 51 ]; do
+	export STREAM=$COUTNER
+	./bin/sim < input
+	cat results/response_time_phase.txt >> results/stream_out.txt
+	let COUNTER=COUNTER+1
+done
