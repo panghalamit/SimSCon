@@ -34,7 +34,7 @@ void Simulation::run(double stop_time)
 		if(sim_time > stop_time)
 			break;
 
-		e.printDetails();
+		// e.printDetails();
 		switch(e.getEventType())
 		{
 			case ARRIVAL:
@@ -78,6 +78,60 @@ void Simulation::run(double stop_time)
 
 void Simulation::stop()
 {
+	// calculate power cost
+	int num_vms = ssdata->getNumVM();
+	float *power_cost = new float[ssdata->getNumPhases()];
+	vector<int>* vm_to_pm_map = new vector<int>(num_vms, -1);
+	vector<int>* mig_list = new vector<int>(num_vms, -1);
+
+	for(int i=0; i<ssdata->getNumPhases(); i++)
+		power_cost[i] = 0;
+
+	float *util = new float[num_vms];
+	for(int phase=0; phase<ssdata->getNumPhases(); phase++)
+	{
+		policy->getMapping(phase, vm_to_pm_map);
+
+		for(int i=0; i<num_vms; i++)
+		    util[i] = 0;
+
+		for(int j=0; j<num_vms; j++)
+		    util[(*vm_to_pm_map)[j]] += ssdata->getArrivalRate(phase, j)/ssdata->getFixedServiceRate(j);
+
+		for(int i=0; i<num_vms; i++)
+		    if(util[i] > 0)
+		        power_cost[phase] += (STATICPOWERCONSTANT + DYNAMICPOWERCONSTANT * (util[i]>1?1:util[i])) 
+		    							* MAXPOWER * COSTPERKWH / 3600 * PHASE_LENGTH * (1-MIGRATIONDURATION);
+	}
+
+	for(int phase=0; phase<ssdata->getNumPhases(); phase++)
+	{
+		policy->getMigrationList(phase, mig_list);
+		policy->getMapping(phase, vm_to_pm_map);
+
+		for(int i=0; i<num_vms; i++)
+		    util[i] = 0;
+
+		for(int j=0; j<num_vms; j++)
+		{
+			if((*mig_list)[j] != -1)
+			{
+				util[(*mig_list)[j]] += MOHCPUINTENSIVE * ssdata->getArrivalRate(phase, j)/ssdata->getFixedServiceRate(j);
+				util[(*vm_to_pm_map)[j]] += (1 + MOHCPUINTENSIVE) * ssdata->getArrivalRate(phase, j)/ssdata->getFixedServiceRate(j);
+			}
+			else
+			{
+				util[(*vm_to_pm_map)[j]] += ssdata->getArrivalRate(phase, j)/ssdata->getFixedServiceRate(j);
+			}
+		}
+
+		for(int i=0; i<num_vms; i++)
+		    if(util[i] > 0)
+		        power_cost[phase] += (STATICPOWERCONSTANT + DYNAMICPOWERCONSTANT * (util[i]>1?1:util[i]))
+		    							* MAXPOWER * COSTPERKWH / 3600 * PHASE_LENGTH * MIGRATIONDURATION;
+	}
+
+	// dumping statistics
 	for(unsigned int i=0; i<vmlist.size(); i++)
 	{
 		cout << endl << "** VM " << i << " stats **" << endl;
@@ -124,12 +178,24 @@ void Simulation::stop()
 		profit_file << endl;
 	}
 
+	float profit = 0;
+	for(int phase=0; phase<ssdata->getNumPhases(); phase++)
+		profit -= power_cost[phase];
+
+	for(int i=0; i<num_vms; i++)
+		profit += vmlist[i]->getOverallProfit();
+
+	cout<<endl<<"profit from DSCP algorithm: "<<policy->getOverallProfit()<<endl;
+	cout<<"profit from simulator: "<< profit <<endl;
+
 	rt_file.close();
 	wt_file.close();
 	ql_file.close();
 	profit_file.close();
-
-	cout<<endl<<"profit from DSCP algorithm: "<<policy->getOverallProfit()<<endl;
+	delete [] power_cost;
+	delete mig_list;
+	delete vm_to_pm_map;
+	delete [] util;
 }
 
 Simulation::~Simulation()
