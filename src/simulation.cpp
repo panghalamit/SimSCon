@@ -5,7 +5,7 @@ Simulation::Simulation(SimSData *ssdata)
 	this->ssdata = ssdata;
 	for(int i=0; i<ssdata->getNumVM(); i++)
 		vmlist.push_back(new VM(ssdata, i));
-	policy = new Khanna(ssdata->getSimData());
+	policy = new Mdp(ssdata->getSimData());
 }
 
 void Simulation::start()
@@ -22,7 +22,9 @@ void Simulation::start()
 
 void Simulation::run(double stop_time)
 {
+	cout<<(int)ceil(stop_time/PHASE_LENGTH)<<endl;
 	policy->run((int)ceil(stop_time/PHASE_LENGTH));
+	policy->printPolicy();
 
 	while(!event_list.empty())
 	{
@@ -43,7 +45,7 @@ void Simulation::run(double stop_time)
 					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
-				vmlist[e.getVMIndex()]->updateOnArrival(sim_time, serv_time, phase_num);
+				vmlist[e.getVMIndex()]->updateOnArrival(sim_time, serv_time, phase_num, migration_phase);
 				break;
 
 			case DEPARTURE:
@@ -52,7 +54,7 @@ void Simulation::run(double stop_time)
 					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
-				vmlist[e.getVMIndex()]->updateOnDeparture(sim_time, serv_time, phase_num);
+				vmlist[e.getVMIndex()]->updateOnDeparture(sim_time, serv_time, phase_num, migration_phase);
 				break;
 
 			case PHASE_BEGIN:
@@ -102,13 +104,21 @@ void Simulation::stop()
 
 	for(int i=0; i<ssdata->getNumPhases(); i++)
 	{
+		rt_file << i << "\t";
 		for(int j=0; j<ssdata->getNumVM(); j++)
 		{
-			rt_file << vmlist[j]->getAvgResponseTime(i) << "\t";
+			rt_file << vmlist[j]->getAvgResponseTime(i, 0) << "\t";
 			wt_file << vmlist[j]->getAvgWaitingTime(i) << "\t";
 			ql_file << vmlist[j]->getAvgQLength(i, sim_time) << "\t";
 			profit_file << vmlist[j]->getAvgProfit(i, sim_time) << "\t";
 		}
+		rt_file << endl;
+		rt_file << i+0.7 << "\t";
+		for(int j=0; j<ssdata->getNumVM(); j++)
+		{
+			rt_file << vmlist[j]->getAvgResponseTime(i, 1) << "\t";
+		}
+
 		rt_file << endl;
 		wt_file << endl;
 		ql_file << endl;

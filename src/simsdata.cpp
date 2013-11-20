@@ -16,8 +16,8 @@ void SimSData::readInput()
 	for (int i=0; i<num_vms; i++) { cin>>temp; sdata->setVmRevenue(i, temp);}
 	for (int i=0; i<num_vms; i++) { cin>>temp; sdata->setVmPenalty(i, temp);}
 
-	for(int i=0; i<num_phases; i++)
-		for(int j=0; j<num_vms; j++)
+	for(int j=0; j<num_vms; j++)
+		for(int i=0; i<num_phases; i++)
 	 		cin>>(*arrival_rates)(i, j);
 
 	for(int i=0; i<num_vms; i++)

@@ -8,12 +8,12 @@ set ytic auto                          # set ytics automatically
 set title "avg response time at vms during each phase"
 set ylabel "average response time"
 set xlabel "phase number"
-set xr [0:4]
+set xr [0:7]
 set yr [0:]
-plot  "response_time_phase.txt" using 1 title "VM0" with linespoint , \
-"response_time_phase.txt" using 2 title "VM1" with linespoint, \
-"response_time_phase.txt" using 3 title "VM2" with linespoint, \
-"response_time_phase.txt" using 4 title "VM3" with linespoint
+plot  "response_time_phase.txt" using 1:2 title "VM0" with linespoint , \
+"response_time_phase.txt" using 1:3 title "VM1" with linespoint, \
+"response_time_phase.txt" using 1:4 title "VM2" with linespoint, \
+"response_time_phase.txt" using 1:5 title "VM3" with linespoint
 set output
 
 set terminal pdf linewidth 1 enhanced color font ",7" dashed dl 1.5

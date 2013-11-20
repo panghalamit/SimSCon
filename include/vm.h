@@ -48,11 +48,11 @@ class VM
 	bool isIdle();
 	bool isEmptyQueue();
 	float getTopInQ();
-	void updateOnArrival(float, float, int);
-	void updateOnDeparture(float, float, int);
+	void updateOnArrival(float, float, int, bool);
+	void updateOnDeparture(float, float, int, bool);
 	void updateOnPhaseChange(float, int);
 	float getAvgWaitingTime(int);
-	float getAvgResponseTime(int);
+	float getAvgResponseTime(int, bool);
 	float getAvgQLength(int, float);
 	float getAvgProfit(int, float);
 	float getOverallResponseTime();
