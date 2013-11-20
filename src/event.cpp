@@ -1,33 +1,33 @@
 #include "event.h"
 
-Event :: Event(EventType e, float t, int vmi)
+Event::Event(EventType e, float t, int vmi)
 {
 	etype = e;
 	stime = t;
 	vm_index = vmi;
 }
 
-bool Event :: operator<(const Event e) const
+bool Event::operator<(const Event e) const
 {
 	return e.stime < stime;
 }
 
-EventType Event :: getEventType()
+EventType Event::getEventType()
 {
 	return etype;
 }
 
-float Event :: getTime()
+float Event::getTime()
 {
 	return stime;
 }
 
-int Event :: getVMIndex()
+int Event::getVMIndex()
 {
 	return vm_index;
 }
 
-void Event :: printDetails()
+void Event::printDetails()
 {
 	switch(etype)
 	{
@@ -41,7 +41,7 @@ void Event :: printDetails()
 			cout<<endl<<"** PHASE "<<vm_index<<" BEGINS **"<<endl;
 			break;
 		case MIG_BEGIN:
-			cout<<"** MIGRATION for PHASE "<<vm_index<<" BEGINS**"<<endl;
+			cout<<"** MIGRATION PHASE for PHASE "<<vm_index<<" BEGINS**"<<endl;
 			break;
 	}
 }

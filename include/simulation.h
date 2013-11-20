@@ -10,9 +10,8 @@
 #include "event.h"
 #include "vm.h"
 #include "simsdata.h"
-
 #include "policy.h"
-#include "khanna.h"
+#include "staticmap.h"
 #include "simdata.h"
 using namespace std;
 

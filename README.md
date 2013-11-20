@@ -20,6 +20,7 @@ Input File
 * penalty for each pm
 * arrival rate in each phase for each pm
 * service rate for each vm
+* response time limit for each vm (SLA violation)
 
 See TODO file for examples.
 

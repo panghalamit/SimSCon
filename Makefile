@@ -12,14 +12,14 @@ ODIR = bin
 PODIR = ../simcon/bin
 LIBS = -lm
 
-_DEPS = event.h simulation.h vm.h common.h lcgrand.h simsdata.h
-_PDEPS = simdata.h utils.h algo.h stateIterator.h state.h config.h policy.h khanna.h
+_DEPS = event.h simulation.h vm.h common.h lcgrand.h simsdata.h staticmap.h
+_PDEPS = simdata.h utils.h algo.h stateIterator.h state.h config.h policy.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS)) $(patsubst %,$(PIDIR)/%,$(_PDEPS))
 
-_OBJ = event.o vm.o simulation.o common.o lcgrand.o simsdata.o
+_OBJ = event.o vm.o simulation.o common.o lcgrand.o simsdata.o staticmap.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-_POBJ = simdata.o utils.o algo.o stateIterator.o state.o policy.o khanna.o
+_POBJ = simdata.o utils.o algo.o stateIterator.o state.o policy.o
 POBJ = $(patsubst %,$(PODIR)/%,$(_POBJ))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

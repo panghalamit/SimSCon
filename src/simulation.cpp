@@ -1,17 +1,18 @@
 #include "simulation.h"
 
-Simulation :: Simulation(SimSData *ssdata)
+Simulation::Simulation(SimSData *ssdata)
 {
 	this->ssdata = ssdata;
 	for(int i=0; i<ssdata->getNumVM(); i++)
 		vmlist.push_back(new VM(ssdata, i));
-	policy = new Khanna(ssdata->getSimData());
+	policy = new StaticMap(ssdata->getSimData());
 }
 
-void Simulation :: start()
+void Simulation::start()
 {
-	migration_phase = false;
+	sim_time = 0;
 	phase_num = -1;
+	migration_phase = false;
 	event_list.push(Event(PHASE_BEGIN, 0, 0));
 	event_list.push(Event(MIG_BEGIN, PHASE_LENGTH*(1-MIGRATIONDURATION), 0));
 	for(unsigned int i=0; i<vmlist.size(); i++)
@@ -19,12 +20,15 @@ void Simulation :: start()
 	cout<<"Yay!! Simulation started..."<<endl;
 }
 
-void Simulation :: run(double stop_time)
+void Simulation::run(double stop_time)
 {
 	policy->run((int)ceil(stop_time/PHASE_LENGTH));
 
 	while(!event_list.empty())
 	{
+		// for(unsigned int i=0; i<vmlist.size(); i++)
+		// cout<<vmlist[i]->num_phases<<" ";
+
 		Event e = event_list.top();
 		sim_time = e.getTime();
 		float serv_time = -1;
@@ -32,7 +36,7 @@ void Simulation :: run(double stop_time)
 		if(sim_time > stop_time)
 			break;
 
-		e.printDetails();
+		//e.printDetails();
 		switch(e.getEventType())
 		{
 			case ARRIVAL:
@@ -42,7 +46,7 @@ void Simulation :: run(double stop_time)
 					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
-				vmlist[e.getVMIndex()]->update_on_arrival(sim_time, serv_time, phase_num);
+				vmlist[e.getVMIndex()]->updateOnArrival(sim_time, serv_time, phase_num);
 				break;
 
 			case DEPARTURE:
@@ -51,13 +55,16 @@ void Simulation :: run(double stop_time)
 					serv_time = vmlist[e.getVMIndex()]->getNextServiceTime(ssdata, policy, phase_num, sim_time, migration_phase);
 					event_list.push(Event(DEPARTURE, sim_time+serv_time, e.getVMIndex()));
 				}
-				vmlist[e.getVMIndex()]->update_on_departure(sim_time, serv_time, phase_num);
+				vmlist[e.getVMIndex()]->updateOnDeparture(sim_time, serv_time, phase_num);
 				break;
 
 			case PHASE_BEGIN:
+				if(phase_num >= 0)
+					for(int i=0; i<ssdata->getNumVM(); i++)
+						vmlist[i]->updateOnPhaseChange(sim_time, phase_num);
 				event_list.push(Event(PHASE_BEGIN, sim_time+PHASE_LENGTH, e.getVMIndex()+1));
 				migration_phase = false;
-				phase_num++;
+				phase_num = (phase_num+1) % ssdata->getNumPhases();
 				break;
 
 			case MIG_BEGIN:
@@ -71,39 +78,59 @@ void Simulation :: run(double stop_time)
 	cout<<"Simulation completed..."<<endl;
 }
 
-void Simulation :: stop ()
+void Simulation::stop()
 {
-	// dumping statistics
-	ofstream stat_file("results/stats.txt");
-	if(stat_file.is_open())
+	for(unsigned int i=0; i<vmlist.size(); i++)
 	{
-		for(unsigned int i=0; i<vmlist.size(); i++)
-		{
-			stat_file << "** VM " << i << " stats **" << endl;
-			for(int j=0; j<ssdata->getNumPhases(); j++)
-			{
-				stat_file << "for phase " << j << "" <<endl;
-				stat_file << "average response time: " << vmlist[i]->getAvgResponseTime(j) << endl;
-				stat_file << "average waiting time: " << vmlist[i]->getAvgWaitingTime(j) << endl;
-				stat_file << "average queue length: " << vmlist[i]->getAvgQLength(j) << endl;
-				stat_file << endl;
-			}
-			stat_file << endl;
-		}
-		stat_file.close();
-	} els;
-	{
-		cout<<"error occured! unable to open stats.txt!"<<endl;
-		exit(1);
+		cout << "** VM " << i << " stats **" << endl;
+		cout << "overall average response time: " << vmlist[i]->getOverallResponseTime() << endl;
+		cout << "overall average waiting time: " << vmlist[i]->getOverallWaitingTime() << endl;
+		cout << "overall average queue length: " << vmlist[i]->getOverallQueueLength(sim_time) << endl;
+		cout << "overall profit: " << vmlist[i]->getOverallProfit(sim_time) << endl;
+		cout << endl;
 	}
 
 	for(unsigned int i=0; i<vmlist.size(); i++)
 		vmlist[i]->stop();
+	cout<<sim_time<<endl;
+	FILE * stat;
+	stat = fopen("results/response_time_phase_log.txt", "w");
+	for(int i=0; i<ssdata->getNumPhases(); i++)
+	{
+		for(int j=0; j<ssdata->getNumVM(); j++)
+			fprintf(stat, "%f\t", vmlist[j]->getAvgResponseTime(i));
+		fprintf(stat, "\n");
+	}
+	fclose(stat);
+    stat = fopen("results/waiting_time_phase_log.txt", "w");
+	for(int i=0; i<ssdata->getNumPhases(); i++)
+	{
+		for(int j=0; j<ssdata->getNumVM(); j++)
+			fprintf(stat, "%f\t", vmlist[j]->getAvgWaitingTime(i));
+		fprintf(stat, "\n");
+	}
+	fclose(stat);
+	/* stat = fopen("results/queuelength_phase_log.txt", "w");
+	for(int i=0; i<ssdata->getNumPhases(); i++)
+	{
+		for(int j=0; j<ssdata->getNumVM(); j++)
+			fprintf(stat, "%f\t", vmlist[j]->getAvgQLength(i,sim_time));
+		fprintf(stat, "\n");
+	}
+	fclose(stat);*/
+	stat = fopen("results/profit_phase_log.txt", "w");
+	for(int i=0; i<ssdata->getNumPhases(); i++)
+	{
+		for(int j=0; j<ssdata->getNumVM(); j++)
+			fprintf(stat, "%f\t", vmlist[j]->getAvgProfit(i, sim_time));
+		fprintf(stat, "\n");
+	}
+	fclose(stat);
 }
 
-Simulation :: ~Simulation()
+Simulation::~Simulation()
 {
-	for(unsigned int i=0; i<vmlist.size(); i++)
-		delete vmlist[i];
+	// for(unsigned int i=0; i<vmlist.size(); i++)
+	// 	delete vmlist[i];
 	delete policy;
 }

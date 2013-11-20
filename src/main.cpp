@@ -14,9 +14,8 @@ int main()
 	setStream(14);
 	Simulation sim(ssdata);
 	sim.start();
-	sim.run(200);
+	sim.run(205);
 	sim.stop();
-
 	delete ssdata;
 	return 0;
 }

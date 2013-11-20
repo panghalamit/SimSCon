@@ -19,6 +19,7 @@ class SimSData
     int num_phases;
     Matrix<float> *arrival_rates;
     float* service_rates;
+    float* response_limit;
     SimData *sdata;
 
   public:
@@ -29,6 +30,9 @@ class SimSData
     int getNumPhases();
     float getArrivalRate(int, int);
     float getFixedServiceRate(int);
+    float getVmRevenue(int);
+    float getVmPenalty(int);
+    float getResponseLimit(int);
     SimData* getSimData();
 };
 
