@@ -9,7 +9,11 @@ Event::Event(EventType e, float t, int vmi)
 
 bool Event::operator<(const Event e) const
 {
-	return e.stime < stime;
+	if(e.stime < stime)
+		return true;
+	else if(e.stime == stime)
+		return e.etype < etype;
+	else return false;
 }
 
 EventType Event::getEventType()
